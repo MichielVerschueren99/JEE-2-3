@@ -31,25 +31,28 @@ public class ReservationSession implements ReservationSessionRemote {
     
     @Override
     public List<CarType> getAvailableCarTypes(Date start, Date end) {
-        em.createQuery(
-                "SELECT ct FROM Cartype ct"
-              + "WHERE EXISTS (SELECT c FROM Car c"
-                           +  "WHERE c.type == ct AND NOT EXISTS (SELECT r FROM Reservation c.reservations"
-                                                               + "WHERE NOr.startDate > :givenStartDate OR r")
+        List<CarType> result = em.createQuery(
+                "SELECT ct FROM CarType ct "
+              + "WHERE EXISTS (SELECT c FROM Car c "
+                           +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN(c.reservations) q " 
+                                                               + "WHERE NOT (r.startDate > :givenEndDate OR r.endDate < :givenStartDate)))")
+                .setParameter("givenEndDate", end)
+                .setParameter("givenStartDate", start)
+                .getResultList();
+        System.out.println(result);
+        return result;
+    } 
         
-        
-        reservation.getEndDate().before(start) || reservation.getStartDate().after(end)
-        
-        List<CarType> availableCarTypes = new LinkedList<CarType>();
-        List<CarRentalCompany> CCList = em.createQuery("SELECT cc FROM CarRentalCompany cc").getResultList();
-        for(CarRentalCompany crc : CCList) {
-            for(CarType ct : crc.getAvailableCarTypes(start, end)) {
-                if(!availableCarTypes.contains(ct))
-                    availableCarTypes.add(ct);
-            }
-        }
-        return availableCarTypes;
-    }
+    //    List<CarType> availableCarTypes = new LinkedList<CarType>();
+    //    List<CarRentalCompany> CCList = em.createQuery("SELECT cc FROM CarRentalCompany cc").getResultList();
+    //    for(CarRentalCompany crc : CCList) {
+    //        for(CarType ct : crc.getAvailableCarTypes(start, end)) {
+    //            if(!availableCarTypes.contains(ct))
+    //                availableCarTypes.add(ct);
+    //        }
+    //    }
+     //   return availableCarTypes;
+    //}
 
     @Override
     public Quote createQuote(String company, ReservationConstraints constraints) throws ReservationException {
@@ -101,6 +104,7 @@ public class ReservationSession implements ReservationSessionRemote {
 
     @Override
     public String getCheapestCarType(Date start, Date end, String region) throws Exception {
-        em.createQuery("SELECT cc FROM CarRentalCompany cc")
+        em.createQuery("SELECT cc FROM CarRentalCompany cc");
+        return "unssupported";
     }
 }
