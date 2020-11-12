@@ -2,11 +2,13 @@ package rental;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.TableGenerator;
 
 @Entity
 public class CarType implements Serializable{
-    
     
     private String name;
     private int nbOfSeats;
@@ -14,6 +16,7 @@ public class CarType implements Serializable{
     private double rentalPricePerDay;
     //trunk space in liters
     private float trunkSpace;
+    private long carTypeID;
     
     /***************
      * CONSTRUCTOR *
@@ -29,13 +32,24 @@ public class CarType implements Serializable{
         this.smokingAllowed = smokingAllowed;
     }
 
+    @TableGenerator(name="carTypeGen",
+        table="CARTYPE_ID_GENERATOR",
+        pkColumnName="GEN_KEY",
+        valueColumnName="GEN_VALUE",
+        pkColumnValue="CARTYPE_ID",
+        allocationSize=1)
     @Id
-    public String getName() {
-    	return name;
+    @GeneratedValue(strategy=GenerationType.TABLE,generator="carTypeGen")
+    public long getCarTypeID() {
+    	return carTypeID;
     }
     
-    public void setName(String newName) {
-    	this.name = newName;
+    public void setCarTypeID(long newID) {
+    	this.carTypeID = newID;
+    }
+    
+    public String getName() {
+    	return name;
     }
     
     public int getNbOfSeats() {

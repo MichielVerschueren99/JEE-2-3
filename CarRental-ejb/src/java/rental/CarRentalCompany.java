@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -68,7 +69,7 @@ public class CarRentalCompany {
      *************/
     
     //returnde origineel een collection
-    @ManyToMany
+    @ManyToMany(cascade=ALL)
     public Set<CarType> getAllTypes() {
         return carTypes;
     }
@@ -104,7 +105,7 @@ public class CarRentalCompany {
      * CARS *
      *********/
     
-    @OneToMany
+    @OneToMany(cascade=ALL)
     public List<Car> getCars() {
         return this.cars;
     }

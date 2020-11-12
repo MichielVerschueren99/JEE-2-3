@@ -89,4 +89,9 @@ public class ReservationSession implements ReservationSessionRemote {
     public String getRenterName() {
         return renter;
     }
+
+    @Override
+    public String getCheapestCarType(Date start, Date end, String region) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -80,4 +80,24 @@ public class ManagerSession implements ManagerSessionRemote {
         CarRentalCompany cc = em.find(CarRentalCompany.class, ccName);
         em.remove(cc); 
     }
+
+    @Override
+    public Set<String> getBestClients() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public CarType getMostPopularCarTypeIn(String carRentalCompanyName, int year) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getNumberOfReservationsBy(String clientName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getNumberOfReservationsByCarType(String carRentalName, String carType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
