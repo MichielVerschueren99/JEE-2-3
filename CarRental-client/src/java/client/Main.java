@@ -71,7 +71,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
 
     @Override
     protected void getAvailableCarTypes(ReservationSessionRemote session, Date start, Date end) throws Exception {
-        session.getAvailableCarTypes(start, end);
+        System.out.println(session.getAvailableCarTypes(start, end));
     }
 
     @Override

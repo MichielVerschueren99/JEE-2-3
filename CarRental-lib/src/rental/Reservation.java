@@ -23,8 +23,7 @@ public class Reservation extends Quote {
     /******
      * ID *
      ******/
-    //TODO global id gebruiken ipv de gewone?
-    @Id
+    
     public int getCarId() {
     	return carId;
     }

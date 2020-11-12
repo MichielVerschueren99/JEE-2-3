@@ -10,9 +10,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.TableGenerator;
 
 @Entity
 public class CarRentalCompany {
@@ -21,7 +24,7 @@ public class CarRentalCompany {
     private String name;
     private List<Car> cars;
     private Set<CarType> carTypes = new HashSet<CarType>();
-	private List<String> regions;
+    private List<String> regions;
 
 	
     /***************
@@ -49,7 +52,7 @@ public class CarRentalCompany {
         return name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

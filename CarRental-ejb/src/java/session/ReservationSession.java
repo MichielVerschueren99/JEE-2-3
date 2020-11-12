@@ -34,12 +34,11 @@ public class ReservationSession implements ReservationSessionRemote {
         List<CarType> result = em.createQuery(
                 "SELECT ct FROM CarType ct "
               + "WHERE EXISTS (SELECT c FROM Car c "
-                           +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN(c.reservations) q " 
-                                                               + "WHERE NOT (r.startDate > :givenEndDate OR r.endDate < :givenStartDate)))")
+                           +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN (c.reservations) AS q " 
+                                                              + "WHERE NOT (r.startDate >= :givenEndDate OR r.endDate <= :givenStartDate)))")
                 .setParameter("givenEndDate", end)
                 .setParameter("givenStartDate", start)
                 .getResultList();
-        System.out.println(result);
         return result;
     } 
         

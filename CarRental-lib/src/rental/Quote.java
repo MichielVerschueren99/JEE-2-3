@@ -2,15 +2,44 @@ package rental;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
 
+
+@MappedSuperclass
 public class Quote implements Serializable {
 
+    
     private Date startDate;
     private Date endDate;
     private String carRenter;
     private String rentalCompany;
     private String carType;
     private double rentalPrice;
+    
+    private long globalID;
+    
+    @TableGenerator(name="quoteGen",
+        table="QUOTE_ID_GENERATOR",
+        pkColumnName="GEN_KEY",
+        valueColumnName="GEN_VALUE",
+        pkColumnValue="QUOTE_ID",
+        allocationSize=1)
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE,generator="quoteGen")
+    public long getGlobalID() {
+    	return this.globalID;
+    }
+    
+    public void setGlobalID(long newID) {
+    	this.globalID = newID;
+    }
+    
+    
     
     /***************
      * CONSTRUCTOR *
@@ -27,12 +56,22 @@ public class Quote implements Serializable {
         this.rentalPrice = rentalPrice;
     }
 
+    @Temporal(javax.persistence.TemporalType.DATE)
     public Date getStartDate() {
         return startDate;
     }
+    
+    public void setStartDate(Date newDate) {
+        this.startDate = newDate;
+    }
 
+    @Temporal(javax.persistence.TemporalType.DATE)
     public Date getEndDate() {
         return endDate;
+    }
+    
+    public void setEndDate(Date newDate) {
+        this.endDate = newDate;
     }
 
     public String getCarRenter() {
