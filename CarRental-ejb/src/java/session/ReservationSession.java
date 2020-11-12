@@ -31,6 +31,15 @@ public class ReservationSession implements ReservationSessionRemote {
     
     @Override
     public List<CarType> getAvailableCarTypes(Date start, Date end) {
+        em.createQuery(
+                "SELECT ct FROM Cartype ct"
+              + "WHERE EXISTS (SELECT c FROM Car c"
+                           +  "WHERE c.type == ct AND NOT EXISTS (SELECT r FROM Reservation c.reservations"
+                                                               + "WHERE NOr.startDate > :givenStartDate OR r")
+        
+        
+        reservation.getEndDate().before(start) || reservation.getStartDate().after(end)
+        
         List<CarType> availableCarTypes = new LinkedList<CarType>();
         List<CarRentalCompany> CCList = em.createQuery("SELECT cc FROM CarRentalCompany cc").getResultList();
         for(CarRentalCompany crc : CCList) {
@@ -92,6 +101,6 @@ public class ReservationSession implements ReservationSessionRemote {
 
     @Override
     public String getCheapestCarType(Date start, Date end, String region) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        em.createQuery("SELECT cc FROM CarRentalCompany cc")
     }
 }
