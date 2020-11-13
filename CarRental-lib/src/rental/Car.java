@@ -21,9 +21,20 @@ public class Car implements Serializable {
    
     private int id;
     
+    @ManyToOne
     private CarType type;
+    
+    @OneToMany(cascade=ALL)
     private Set<Reservation> reservations;
     
+    @TableGenerator(name="carGen",
+        table="CAR_ID_GENERATOR",
+        pkColumnName="GEN_KEY",
+        valueColumnName="GEN_VALUE",
+        pkColumnValue="CAR_ID",
+        allocationSize=1)
+    @Id
+    @GeneratedValue(strategy=GenerationType.TABLE,generator="carGen")
     private long globalID;
 
     /***************
@@ -41,43 +52,20 @@ public class Car implements Serializable {
     /******
      * ID *
      ******/
-   
-    @TableGenerator(name="carGen",
-        table="CAR_ID_GENERATOR",
-        pkColumnName="GEN_KEY",
-        valueColumnName="GEN_VALUE",
-        pkColumnValue="CAR_ID",
-        allocationSize=1)
-    @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="carGen")
-    public long getGlobalID() {
-    	return this.globalID;
-    }
-    
-    public void setGlobalID(long newID) {
-    	this.globalID = newID;
-    }
     
     public int getId() {
     	return id;
-    }
-    
-    public void setId(int newId) {
-    	this.id = newId;
     }
     
     /************
      * CAR TYPE *
      ************/
     
-    @ManyToOne
+    
     public CarType getType() {
         return type;
     }
 	
-    public void setType(CarType type) {
-        this.type = type;
-    }
     /****************
      * RESERVATIONS *
      ****************/
@@ -103,12 +91,9 @@ public class Car implements Serializable {
         reservations.remove(reservation);
     }
 
-    @OneToMany(cascade=ALL)
+    
     public Set<Reservation> getReservations() {
         return reservations;
     }
     
-    public void setReservations(Set<Reservation> newSet) {
-        this.reservations = newSet;
-    }
 }
