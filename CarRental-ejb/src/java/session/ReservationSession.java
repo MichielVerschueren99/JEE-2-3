@@ -40,29 +40,32 @@ public class ReservationSession implements ReservationSessionRemote {
                 .setParameter("givenStartDate", start)
                 .getResultList();
         return result;
-    } 
-        
-    //    List<CarType> availableCarTypes = new LinkedList<CarType>();
-    //    List<CarRentalCompany> CCList = em.createQuery("SELECT cc FROM CarRentalCompany cc").getResultList();
-    //    for(CarRentalCompany crc : CCList) {
-    //        for(CarType ct : crc.getAvailableCarTypes(start, end)) {
-    //            if(!availableCarTypes.contains(ct))
-    //                availableCarTypes.add(ct);
-    //        }
-    //    }
-     //   return availableCarTypes;
-    //}
+    }
 
+//    public Quote createQuote(CarRentalCompany company, ReservationConstraints constraints) throws ReservationException {
+//        try {
+//            CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
+//            Quote out = requestedCompany.createQuote(constraints, renter);
+//            quotes.add(out);
+//            return out;
+//        } catch(Exception e) {
+//            throw new ReservationException(e);
+//        }
+//    }
+    
     @Override
-    public Quote createQuote(String company, ReservationConstraints constraints) throws ReservationException {
-        try {
-            CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-            Quote out = requestedCompany.createQuote(constraints, renter);
-            quotes.add(out);
-            return out;
-        } catch(Exception e) {
-            throw new ReservationException(e);
+    public void createQuote(String name, ReservationConstraints constraints) throws ReservationException {
+        List<CarRentalCompany> allCCs = em.createQuery("SELECT cc FROM CarRentalCompany cc").getResultList();
+	for (CarRentalCompany cc : allCCs) {
+            try {
+		Quote out = cc.createQuote(constraints, name);
+                quotes.add(out);
+                return;
+            } catch (Exception e) {
+		//deze cc heeft geen auto voor gevraagde constraints => volgende cc proberen
+            }
         }
+        throw new ReservationException("no quote found");
     }
 
     @Override
@@ -104,6 +107,6 @@ public class ReservationSession implements ReservationSessionRemote {
     @Override
     public String getCheapestCarType(Date start, Date end, String region) throws Exception {
         em.createQuery("SELECT cc FROM CarRentalCompany cc");
-        return "unssupported";
+        return "unsupported";
     }
 }

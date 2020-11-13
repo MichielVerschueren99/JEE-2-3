@@ -21,9 +21,16 @@ import javax.persistence.TableGenerator;
 public class CarRentalCompany {
 
     private static Logger logger = Logger.getLogger(CarRentalCompany.class.getName());
+    
+    @Id
     private String name;
+    
+    @OneToMany(cascade=ALL)
     private List<Car> cars;
+    
+    @ManyToMany(cascade=ALL) //TODO ni onetomany?
     private Set<CarType> carTypes = new HashSet<CarType>();
+    
     private List<String> regions;
 
 	
@@ -47,12 +54,11 @@ public class CarRentalCompany {
      * NAME *
      ********/
     
-    @Id
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -71,14 +77,8 @@ public class CarRentalCompany {
      * CAR TYPES *
      *************/
     
-    //returnde origineel een collection
-    @ManyToMany(cascade=ALL)
-    public Set<CarType> getAllTypes() {
+    public Collection<CarType> getAllTypes() {
         return carTypes;
-    }
-
-    public void setAllTypes(Set<CarType> newTypes) {
-        this.carTypes = newTypes;
     }
 
     public CarType getType(String carTypeName) {
@@ -107,15 +107,6 @@ public class CarRentalCompany {
     /*********
      * CARS *
      *********/
-    
-    @OneToMany(cascade=ALL)
-    public List<Car> getCars() {
-        return this.cars;
-    }
-    
-    public void setCars(List<Car> newCars) {
-        this.cars = newCars;
-    }
     
     public Car getCar(int uid) {
         for (Car car : cars) {
