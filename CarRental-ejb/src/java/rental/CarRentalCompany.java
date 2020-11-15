@@ -9,10 +9,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.persistence.CascadeType.ALL;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
@@ -31,6 +33,7 @@ public class CarRentalCompany {
     @ManyToMany(cascade=ALL) //TODO ni onetomany?
     private Set<CarType> carTypes = new HashSet<CarType>();
     
+    @ElementCollection
     private List<String> regions;
 
 	

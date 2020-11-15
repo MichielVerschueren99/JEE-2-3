@@ -106,7 +106,19 @@ public class ReservationSession implements ReservationSessionRemote {
 
     @Override
     public String getCheapestCarType(Date start, Date end, String region) throws Exception {
-        em.createQuery("SELECT cc FROM CarRentalCompany cc");
-        return "unsupported";
+         Object carType = em.createQuery("SELECT ct.name FROM CarType ct "
+                 + "WHERE ct.rentalPricePerDay = (SELECT MIN(ct.rentalPricePerDay) FROM CarType ct "
+                + "WHERE EXISTS (SELECT cc FROM CarRentalCompany cc "
+                    + "WHERE ct IN(cc.carTypes) AND :givenRegion IN(cc.regions) AND EXISTS (SELECT c FROM Car c "
+                      +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN (c.reservations) AS q " 
+                                                                 + "WHERE NOT (r.startDate >= :givenEndDate OR r.endDate <= :givenStartDate)))))")
+                .setParameter("givenEndDate", end)
+                .setParameter("givenStartDate", start)
+                .setParameter("givenRegion", region)
+                .getSingleResult();
+         
+        System.out.println("cheapest" + carType);
+        return carType.toString();
     }
+
 }
