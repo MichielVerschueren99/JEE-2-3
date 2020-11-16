@@ -24,10 +24,10 @@ public class ReservationSession implements ReservationSessionRemote {
     private String renter;
     private List<Quote> quotes = new LinkedList<Quote>();
 
-    //@Override
-    //public Set<String> getAllRentalCompanies() {
-    //    return new HashSet<String>(RentalStore.getRentals().keySet());
-    //} (NI GEBRUIKT)
+    public Set<String> getAllRentalCompanies() {
+        List<String> companies = em.createQuery("SELECT cc.name FROM CarRentalCompany cc").getResultList();
+        return new HashSet<>(companies);
+    }
     
     @Override
     public List<CarType> getAvailableCarTypes(Date start, Date end) {
