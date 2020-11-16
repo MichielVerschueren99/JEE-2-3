@@ -113,17 +113,30 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public Set<String> getBestClients() {
-        List<Long> counts = em.createQuery("SELECT COUNT(r2) FROM Reservation r2 GROUP BY r2.carRenter").getResultList();
-        Long max = Collections.max(counts);
-        //ik vind geen manier om dit als subquery te doen. de counts query mag ni gedefinieerd worden in FROM en lezen van een lijst is ook vaag
-        System.out.println(counts);
-        List<String> result = em.createQuery("SELECT r.carRenter FROM Reservation r GROUP BY r.carRenter "
-                + "HAVING COUNT(r.carRenter) = :givenCounts")
-                .setParameter("givenCounts", max)
+        List<String> result = 
+                em.createQuery("SELECT r.carRenter FROM Reservation r "
+                             + "WHERE NOT EXISTS (SELECT r2.carRenter FROM Reservation r2 "
+                                               + "WHERE (SELECT COUNT(r3) FROM Reservation r3 "
+                                                      + "WHERE r3.carRenter = r2.carRenter) > (SELECT COUNT(r4) FROM Reservation r4 "
+                                                                                            + "WHERE r4.carRenter = r.carRenter))")
                 .getResultList();
-        System.out.println(result);        
         return new HashSet<>(result);
     }
+    
+    
+//    @Override
+//    public Set<String> getBestClients() {
+//        List<Long> counts = em.createQuery("SELECT COUNT(r2) FROM Reservation r2 GROUP BY r2.carRenter").getResultList();
+//        Long max = Collections.max(counts);
+//        //ik vind geen manier om dit als subquery te doen. de counts query mag ni gedefinieerd worden in FROM en lezen van een lijst is ook vaag
+//        System.out.println(counts);
+//        List<String> result = em.createQuery("SELECT r.carRenter FROM Reservation r GROUP BY r.carRenter "
+//                + "HAVING COUNT(r.carRenter) = :givenCounts")
+//               .setParameter("givenCounts", max)
+//                .getResultList();
+//        System.out.println(result);        
+//        return new HashSet<>(result);
+//    }
 
     @Override
     public CarType getMostPopularCarTypeIn(String carRentalCompanyName, int year) {
