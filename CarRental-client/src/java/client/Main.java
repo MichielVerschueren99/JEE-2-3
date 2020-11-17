@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import rental.Car;
@@ -38,9 +39,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
         managerSession.addCompany(hertzData.name, hertzData.regions, hertzData.cars);
         managerSession.addCompany(dockxData.name, dockxData.regions, dockxData.cars);
         
-        new Main("trips").run();
-        
-        
+        new Main("trips").run();               
     }
 
     @Override
