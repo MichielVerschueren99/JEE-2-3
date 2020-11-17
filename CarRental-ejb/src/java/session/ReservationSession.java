@@ -5,7 +5,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Resource;
 import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
+import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
+import static javax.ejb.TransactionAttributeType.REQUIRED;
+import javax.transaction.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import rental.CarRentalCompany;
@@ -16,7 +21,11 @@ import rental.ReservationConstraints;
 import rental.ReservationException;
 
 @Stateful
+@TransactionAttribute(NOT_SUPPORTED)
 public class ReservationSession implements ReservationSessionRemote {
+    
+    @Resource
+    javax.ejb.SessionContext ctx;
     
     @PersistenceContext
     private EntityManager em;
@@ -41,17 +50,6 @@ public class ReservationSession implements ReservationSessionRemote {
                 .getResultList();
         return result;
     }
-
-//    public Quote createQuote(CarRentalCompany company, ReservationConstraints constraints) throws ReservationException {
-//        try {
-//            CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-//            Quote out = requestedCompany.createQuote(constraints, renter);
-//            quotes.add(out);
-//            return out;
-//        } catch(Exception e) {
-//            throw new ReservationException(e);
-//        }
-//    }
     
     @Override
     public void createQuote(String name, ReservationConstraints constraints) throws ReservationException {
@@ -74,6 +72,7 @@ public class ReservationSession implements ReservationSessionRemote {
     }
 
     @Override
+    @TransactionAttribute(REQUIRED)
     public List<Reservation> confirmQuotes() throws ReservationException {
         List<Reservation> done = new LinkedList<>();
         try {
@@ -82,12 +81,10 @@ public class ReservationSession implements ReservationSessionRemote {
                 done.add(companyOfQuote.confirmQuote(quote));
             }
         } catch (Exception e) {
-            for(Reservation r:done) {
-                CarRentalCompany companyOfReservation = em.find(CarRentalCompany.class, r.getRentalCompany());
-                companyOfReservation.cancelReservation(r);
-            }   
+            ctx.setRollbackOnly();
             throw new ReservationException(e);
         }
+        this.quotes= new LinkedList();
         return done;
     }
 

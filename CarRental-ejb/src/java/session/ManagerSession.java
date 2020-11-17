@@ -9,6 +9,8 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.ElementCollection;
 import javax.persistence.EntityManager;
@@ -20,6 +22,7 @@ import rental.CarType;
 import rental.Reservation;
 
 @Stateless
+@RolesAllowed("Manager")
 public class ManagerSession implements ManagerSessionRemote {
     
     @PersistenceContext
@@ -31,13 +34,7 @@ public class ManagerSession implements ManagerSessionRemote {
                 .setParameter("givenCompany", company)
                 .getResultList();
         return  new HashSet<>(result);
-        //try {
-        //    CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-        //    return new HashSet<CarType>(requestedCompany.getAllTypes());
-        //} catch (IllegalArgumentException ex) {
-        //    Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-        //    return null;
-        //}
+
     }
 
     @Override
@@ -49,17 +46,7 @@ public class ManagerSession implements ManagerSessionRemote {
                         .setParameter("givencompany", company)
                         .getResultList();
         return new HashSet<>(result);
-        //Set<Integer> out = new HashSet<Integer>();
-        //try {
-        //    CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-        //    for(Car c: requestedCompany.getCars(type)){
-        //        out.add(c.getId());
-        //   }
-        //} catch (IllegalArgumentException ex) {
-        //    Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-        //    return null;
-        //}
-        //return out;
+
     }
 
     @Override
@@ -71,14 +58,7 @@ public class ManagerSession implements ManagerSessionRemote {
                 .getSingleResult();
         return ((Long) result).intValue();
     }
-        //try {
-        //    CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-        //    return requestedCompany.getCar(id).getReservations().size();
-        //} catch (IllegalArgumentException ex) {
-        //    Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-        //    return 0;
-        //}
-    //}
+
 
     @Override
     public int getNumberOfReservations(String company, String type) {   
@@ -88,18 +68,7 @@ public class ManagerSession implements ManagerSessionRemote {
                 .getSingleResult();
         return ((Long) result).intValue();
     }
-        //Set<Reservation> out = new HashSet<Reservation>();
-        //try {
-        //    CarRentalCompany requestedCompany = em.find(CarRentalCompany.class, company);
-        //    for(Car c: requestedCompany.getCars(type)){
-        //        out.addAll(c.getReservations());
-        //    }
-        //} catch (IllegalArgumentException ex) {
-        //    Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-        //    return 0;
-       // }
-        //return out.size();
-    //}
+
 
     public void addCompany(String name, List<String> regions, List<Car> cars) {
         CarRentalCompany newCC = new CarRentalCompany(name, regions, cars);
@@ -122,21 +91,6 @@ public class ManagerSession implements ManagerSessionRemote {
                 .getResultList();
         return new HashSet<>(result);
     }
-    
-    
-//    @Override
-//    public Set<String> getBestClients() {
-//        List<Long> counts = em.createQuery("SELECT COUNT(r2) FROM Reservation r2 GROUP BY r2.carRenter").getResultList();
-//        Long max = Collections.max(counts);
-//        //ik vind geen manier om dit als subquery te doen. de counts query mag ni gedefinieerd worden in FROM en lezen van een lijst is ook vaag
-//        System.out.println(counts);
-//        List<String> result = em.createQuery("SELECT r.carRenter FROM Reservation r GROUP BY r.carRenter "
-//                + "HAVING COUNT(r.carRenter) = :givenCounts")
-//               .setParameter("givenCounts", max)
-//                .getResultList();
-//        System.out.println(result);        
-//        return new HashSet<>(result);
-//    }
 
     @Override
     public CarType getMostPopularCarTypeIn(String carRentalCompanyName, int year) {
