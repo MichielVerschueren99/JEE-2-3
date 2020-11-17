@@ -83,8 +83,8 @@ public class ManagerSession implements ManagerSessionRemote {
     @Override
     public Set<String> getBestClients() {
         List<String> result = 
-                em.createQuery("SELECT r.carRenter FROM Reservation r "
-                             + "WHERE NOT EXISTS (SELECT r2.carRenter FROM Reservation r2 "
+                em.createQuery("SELECT DISTINCT r.carRenter FROM Reservation r "
+                             + "WHERE NOT EXISTS (SELECT r2 FROM Reservation r2 "
                                                + "WHERE (SELECT COUNT(r3) FROM Reservation r3 "
                                                       + "WHERE r3.carRenter = r2.carRenter) > (SELECT COUNT(r4) FROM Reservation r4 "
                                                                                             + "WHERE r4.carRenter = r.carRenter))")
@@ -103,33 +103,61 @@ public class ManagerSession implements ManagerSessionRemote {
             Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        List<Long> counts = em.createQuery("SELECT COUNT(r2) FROM Reservation r2 WHERE r2.startDate <= :givenEndDate AND r2.endDate >= :givenStartDate "
-                                                + "AND r2.rentalCompany = :givenCompany  "
-                                                + "GROUP BY r2.carType")
-                                .setParameter("givenEndDate", endDate)
-                                .setParameter("givenStartDate", startDate)
-                                .setParameter("givenCompany", carRentalCompanyName )
-                                .getResultList();
-        Long max = Collections.max(counts);
-        List<String> types = em.createQuery("SELECT r.carType FROM Reservation r "
-                                            + "WHERE r.startDate <= :givenEndDate AND r.endDate >= :givenStartDate AND r.rentalCompany = :givenCompany "
-                                            + "GROUP BY r.carType HAVING COUNT(r.carType)= :givenCounts")
-                                                .setParameter("givenEndDate", endDate)
-                                                .setParameter("givenStartDate", startDate)
-                                                .setParameter("givenCompany", carRentalCompanyName)
-                                                .setParameter("givenCounts", max)
-                                                .getResultList();
-        System.out.println(types);
-        String type = types.get(0);
-        List<CarType> result = em.createQuery("SELECT ct FROM CarType ct "
-                                + "WHERE EXISTS (SELECT cc FROM CarRentalCompany cc WHERE ct IN(cc.carTypes) AND cc.name = :givenCompany) "
-                                + "AND ct.name = :givenType")
-                .setParameter("givenType", type)    
+        List<CarType> result =
+                em.createQuery("SELECT c FROM CarType c "
+                             + "WHERE EXISTS (SELECT r.carType from Reservation r "
+                                              + "WHERE c.name = r.carType AND r.startDate <= :givenEndDate AND r.endDate >= :givenStartDate AND r.rentalCompany = :givenCompany "
+                                              + "AND NOT EXISTS (SELECT r2 FROM Reservation r2 "
+                                                              + "WHERE (SELECT COUNT(r3) FROM Reservation r3 "
+                                                                     + "WHERE r3.carType = r2.carType AND r3.startDate <= :givenEndDate AND r3.endDate >= :givenStartDate AND r3.rentalCompany = :givenCompany) "
+                                                                     + "> (SELECT COUNT(r4) FROM Reservation r4 "
+                                                                        + "WHERE r4.carType = r.carType AND r4.startDate <= :givenEndDate AND r4.endDate >= :givenStartDate AND r4.rentalCompany = :givenCompany)))")
+                .setParameter("givenEndDate", endDate)
+                .setParameter("givenStartDate", startDate)
                 .setParameter("givenCompany", carRentalCompanyName )
                 .getResultList();
-        System.out.println(result);
-        return result.get(0);
+        if (result.isEmpty()) return null;
+        else return result.get(0);
     }
+    
+    
+//    public CarType getMostPopularCarTypeInoud(String carRentalCompanyName, int year) {
+//        Date startDate = new Date();
+//        Date endDate = new Date();
+//        try {
+//            startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + year);
+//            endDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/12/" + year);
+//        } catch (ParseException ex) {
+//            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        List<Long> counts = em.createQuery("SELECT COUNT(r2) FROM Reservation r2 WHERE r2.startDate <= :givenEndDate AND r2.endDate >= :givenStartDate "
+//                                                + "AND r2.rentalCompany = :givenCompany  "
+//                                                + "GROUP BY r2.carType")
+//                                .setParameter("givenEndDate", endDate)
+//                                .setParameter("givenStartDate", startDate)
+//                                .setParameter("givenCompany", carRentalCompanyName )
+//                                .getResultList();
+//        Long max = Collections.max(counts);
+//        List<String> types = em.createQuery("SELECT r.carType FROM Reservation r "
+//                                            + "WHERE r.startDate <= :givenEndDate AND r.endDate >= :givenStartDate AND r.rentalCompany = :givenCompany "
+//                                            + "GROUP BY r.carType HAVING COUNT(r.carType)= :givenCounts")
+//                                                .setParameter("givenEndDate", endDate)
+//                                                .setParameter("givenStartDate", startDate)
+//                                                .setParameter("givenCompany", carRentalCompanyName)
+//                                                .setParameter("givenCounts", max)
+//                                                .getResultList();
+//        System.out.println(types);
+//        String type = types.get(0);
+//        List<CarType> result = em.createQuery("SELECT ct FROM CarType ct "
+//                                + "WHERE EXISTS (SELECT cc FROM CarRentalCompany cc WHERE ct IN(cc.carTypes) AND cc.name = :givenCompany) "
+//                                + "AND ct.name = :givenType")
+//                .setParameter("givenType", type)    
+//                .setParameter("givenCompany", carRentalCompanyName )
+//                .getResultList();
+//        System.out.println(result);
+//        return result.get(0);
+//    }
 
     @Override
     public int getNumberOfReservationsBy(String clientName) {
