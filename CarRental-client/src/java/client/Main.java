@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import rental.Car;
@@ -54,7 +53,11 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
 
     @Override
     protected CarType getMostPopularCarTypeIn(ManagerSessionRemote ms, String carRentalCompanyName, int year) throws Exception {
-        return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
+        //TEST OP GEEN ERRORS
+       System.out.println(ms.getCarTypes(carRentalCompanyName));
+       System.out.println(ms.getCarIds(carRentalCompanyName, "MPV"));
+       System.out.println(ms.getNumberOfReservations(carRentalCompanyName, "Compact", 1));
+       return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
     }
 
     @Override
