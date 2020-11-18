@@ -10,7 +10,6 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import static javax.ejb.TransactionAttributeType.NOT_SUPPORTED;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
-import javax.transaction.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import rental.CarRentalCompany;
@@ -31,9 +30,9 @@ public class ReservationSession implements ReservationSessionRemote {
     private EntityManager em;
 
     private String renter;
-    private List<Quote> quotes = new LinkedList<Quote>();
+    private List<Quote> quotes = new LinkedList<>();
 
-    public Set<String> getAllRentalCompanies() {
+    public Set<String> getAllRentalCompanies() { //NI GETEST
         List<String> companies = em.createQuery("SELECT cc.name FROM CarRentalCompany cc").getResultList();
         return new HashSet<>(companies);
     }
