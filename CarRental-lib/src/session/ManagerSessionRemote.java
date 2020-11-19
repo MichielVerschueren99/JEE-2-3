@@ -1,13 +1,10 @@
 package session;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Remote;
-import javax.naming.InitialContext;
-import rental.Car;
+import rental.CarData;
 import rental.CarType;
-import rental.Reservation;
 import rental.TypeAlreadyExistsException;
 import rental.TypeNotInCrCException;
 
@@ -20,7 +17,7 @@ public interface ManagerSessionRemote {
     
     public int getNumberOfReservations(String company, String type, int carId);
     
-    public void addCompany(String name, List<String> regions, List<Car> cars);
+    public void addCompany(String name, List<String> regions, List<CarData> cars);
     
     public Set<String> getBestClients();
 

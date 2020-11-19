@@ -2,10 +2,7 @@ package session;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import javax.ejb.Remote;
-import javax.naming.InitialContext;
-import rental.Car;
 import rental.CarType;
 import rental.Quote;
 import rental.Reservation;
