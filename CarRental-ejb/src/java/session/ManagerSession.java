@@ -18,6 +18,8 @@ import javax.persistence.PersistenceContext;
 import rental.Car;
 import rental.CarRentalCompany;
 import rental.CarType;
+import rental.TypeAlreadyExistsException;
+import rental.TypeNotInCrCException;
 
 @Stateless
 @RolesAllowed("Manager")
@@ -28,7 +30,7 @@ public class ManagerSession implements ManagerSessionRemote {
     private EntityManager em;
     
     @Override
-    public Set<CarType> getCarTypes(String company) { //NI GETEST
+    public Set<CarType> getCarTypes(String company) { //NG
         List<CarType> result = em.createQuery("SELECT cc.carTypes FROM CarRentalCompany cc "
                                             + "WHERE cc.name = :givenCompany")
                 .setParameter("givenCompany", company)
@@ -38,7 +40,7 @@ public class ManagerSession implements ManagerSessionRemote {
     }
 
     @Override
-    public Set<Integer> getCarIds(String company, String type) { //NI GETEST
+    public Set<Integer> getCarIds(String company, String type) { //NG
         List<Integer> result =
                 em.createQuery("SELECT c.id FROM Car c "
                              + "WHERE EXISTS (SELECT cc FROM CarRentalCompany cc WHERE cc.name = :givenCompany AND c IN (cc.cars)) "
@@ -51,22 +53,12 @@ public class ManagerSession implements ManagerSessionRemote {
     }
 
     @Override
-    public int getNumberOfReservations(String company, String type, int id) {
+    public int getNumberOfReservations(String company, String type, int id) { //NG
         Object result = em.createQuery("SELECT COUNT(r) FROM Reservation r "
                                      + "WHERE r.rentalCompany = :givenCompany AND r.carType = :givenType AND r.carId = :givenId")
                 .setParameter("givenCompany", company)
                 .setParameter("givenType", type)
                 .setParameter("givenId", id)
-                .getSingleResult();
-        return ((Long) result).intValue();
-    }
-
-
-    @Override
-    public int getNumberOfReservations(String company, String type) {   
-        Object result = em.createQuery("SELECT COUNT(r) FROM Reservation r WHERE r.rentalCompany= :givenCompany AND r.carType = :givenType")
-                .setParameter("givenCompany", company)
-                .setParameter("givenType", type)
                 .getSingleResult();
         return ((Long) result).intValue();
     }
@@ -81,9 +73,17 @@ public class ManagerSession implements ManagerSessionRemote {
     
     @Override
     @TransactionAttribute(REQUIRED)
-    public void removeCompany(String ccName) {
-        CarRentalCompany cc = em.find(CarRentalCompany.class, ccName);
-        em.remove(cc); 
+    public void addCarType(CarType ct, String crcName) throws TypeAlreadyExistsException {
+        CarRentalCompany crc = em.find(CarRentalCompany.class, crcName);
+        crc.addType(ct);
+    }
+    
+    
+    @Override
+    @TransactionAttribute(REQUIRED)
+    public void addCar(int carID, String typeName, String crcName) throws TypeNotInCrCException {
+        CarRentalCompany crc = em.find(CarRentalCompany.class, crcName);
+        crc.addCar(carID, typeName);
     }
 
     @Override
@@ -121,6 +121,7 @@ public class ManagerSession implements ManagerSessionRemote {
                 .setParameter("givenEndDate", endDate)
                 .setParameter("givenStartDate", startDate)
                 .setParameter("givenCompany", carRentalCompanyName )
+                .setMaxResults(1)
                 .getResultList();
         if (result.isEmpty()) return null;
         else return result.get(0);

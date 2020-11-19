@@ -32,7 +32,7 @@ public class ReservationSession implements ReservationSessionRemote {
     private String renter;
     private List<Quote> quotes = new LinkedList<>();
 
-    public Set<String> getAllRentalCompanies() { //NI GETEST
+    public Set<String> getAllRentalCompanies() { //NG
         List<String> companies = em.createQuery("SELECT cc.name FROM CarRentalCompany cc").getResultList();
         return new HashSet<>(companies);
     }

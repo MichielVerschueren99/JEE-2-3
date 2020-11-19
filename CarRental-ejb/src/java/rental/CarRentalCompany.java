@@ -11,12 +11,8 @@ import java.util.logging.Logger;
 import static javax.persistence.CascadeType.ALL;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.TableGenerator;
 
 @Entity
 public class CarRentalCompany {
@@ -26,10 +22,10 @@ public class CarRentalCompany {
     @Id
     private String name;
     
-    @OneToMany(cascade=ALL)
+    @OneToMany(cascade=ALL, orphanRemoval=true)
     private List<Car> cars;
     
-    @ManyToMany(cascade=ALL) //TODO ni onetomany?
+    @OneToMany(cascade=ALL)
     private Set<CarType> carTypes = new HashSet<CarType>();
     
     @ElementCollection
@@ -81,6 +77,14 @@ public class CarRentalCompany {
     
     public Collection<CarType> getAllTypes() {
         return carTypes;
+    }
+    
+    public void addType(CarType ct) throws TypeAlreadyExistsException {
+        if (carTypes.contains(ct)) {
+            throw new TypeAlreadyExistsException();
+        } else {
+            carTypes.add(ct);
+        }
     }
 
     public CarType getType(String carTypeName) {
@@ -147,6 +151,20 @@ public class CarRentalCompany {
             }
         }
         return availableCars;
+    }
+    
+    public void addCar(int id, String typeName) throws TypeNotInCrCException {
+        CarType neededCT = null;
+        for(CarType ct : this.getAllTypes()) {
+            if (ct.getName().equals(typeName)) {
+                neededCT = ct;
+            }
+        }
+        if (neededCT == null) {
+            throw new TypeNotInCrCException();
+        } else {
+            this.cars.add(new Car(id, neededCT));
+        }
     }
 
     /****************
