@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
-import rental.Car;
+import rental.CarData;
 import rental.CarType;
 import rental.Reservation;
 import rental.ReservationConstraints;
@@ -44,12 +44,12 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
         
         Set<CarType> allTypes2 = new HashSet<>();
         
-        for (Car c : hertzData.cars) {
-            allTypes1.add(c.getType());
+        for (CarData c : hertzData.cars) {
+            allTypes1.add(c.type);
         }
         
-        for (Car c : dockxData.cars) {
-            allTypes2.add(c.getType());
+        for (CarData c : dockxData.cars) {
+            allTypes2.add(c.type);
         }
         
         for (CarType ct : allTypes1) {
@@ -60,12 +60,12 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
             managerSession.addCarType(ct, "Dockx");
         }
         
-        for (Car c : hertzData.cars) {
-            managerSession.addCar(c.getId(), c.getType().getName(), "Hertz");
+        for (CarData c : hertzData.cars) {
+            managerSession.addCar(c.id, c.type.getName(), "Hertz");
         }
         
-        for (Car c : dockxData.cars) {
-            managerSession.addCar(c.getId(), c.getType().getName(), "Dockx");
+        for (CarData c : dockxData.cars) {
+            managerSession.addCar(c.id, c.type.getName(), "Dockx");
         }
         
         new Main("trips").run();               
@@ -83,12 +83,6 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
 
     @Override
     protected CarType getMostPopularCarTypeIn(ManagerSessionRemote ms, String carRentalCompanyName, int year) throws Exception {
-        //TEST OP GEEN ERRORS
-       System.out.println(ms.getCarTypes(carRentalCompanyName));
-       System.out.println(ms.getCarIds(carRentalCompanyName, "MPV"));
-       System.out.println(ms.getNumberOfReservations(carRentalCompanyName, "Compact", 1));
-       ms.addCarType(new CarType("CHECK", 666, 900000, 10000, true), carRentalCompanyName);
-       ms.addCar(420, "CHECK", carRentalCompanyName);
        return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
     }
 
@@ -129,7 +123,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
         return ms.getNumberOfReservationsByCarType(carRentalName, carType);
     }
     
-    protected void addCompany(ManagerSessionRemote ms, String name, List<String> regions, List<Car> cars) {
+    protected void addCompany(ManagerSessionRemote ms, String name, List<String> regions, List<CarData> cars) {
         ms.addCompany(name, regions, cars);
     }
     
@@ -176,7 +170,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
                             Boolean.parseBoolean(csvReader.nextToken()));
                     //create N new cars with given type, where N is the 5th field
                     for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
-                        out.cars.add(new Car(nextuid++, type));
+                        out.cars.add(new CarData(nextuid++, type));
                     }        
                 }
             } 
@@ -188,7 +182,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
     }
     
     static class CrcData {
-            public List<Car> cars = new LinkedList<Car>();
+            public List<CarData> cars = new LinkedList<CarData>();
             public String name;
             public List<String> regions =  new LinkedList<String>();
     }
