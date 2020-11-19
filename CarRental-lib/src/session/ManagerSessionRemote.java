@@ -8,6 +8,8 @@ import javax.naming.InitialContext;
 import rental.Car;
 import rental.CarType;
 import rental.Reservation;
+import rental.TypeAlreadyExistsException;
+import rental.TypeNotInCrCException;
 
 @Remote
 public interface ManagerSessionRemote {
@@ -18,11 +20,7 @@ public interface ManagerSessionRemote {
     
     public int getNumberOfReservations(String company, String type, int carId);
     
-    public int getNumberOfReservations(String company, String type);
-    
     public void addCompany(String name, List<String> regions, List<Car> cars);
-    
-    public void removeCompany(String ccName);
     
     public Set<String> getBestClients();
 
@@ -31,5 +29,9 @@ public interface ManagerSessionRemote {
     public int getNumberOfReservationsBy(String clientName);
 
     public int getNumberOfReservationsByCarType( String carRentalName, String carType);
+
+    public void addCar(int id, String typeName, String crcName) throws TypeNotInCrCException;
+
+    public void addCarType(CarType ct, String crcName) throws TypeAlreadyExistsException;
  
 }

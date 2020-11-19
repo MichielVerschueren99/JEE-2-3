@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.TableGenerator;
 
 @Entity
-public class CarType implements Serializable{ //TODO overal setters toegevoegd?
+public class CarType implements Serializable{
     
     private String name;
     private int nbOfSeats;

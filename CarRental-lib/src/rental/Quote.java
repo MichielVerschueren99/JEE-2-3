@@ -8,15 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.DATE;
 
 
 @MappedSuperclass
 public class Quote implements Serializable {
 
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(DATE)
     private Date startDate;
     
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(DATE)
     private Date endDate;
     
     private String carRenter;
