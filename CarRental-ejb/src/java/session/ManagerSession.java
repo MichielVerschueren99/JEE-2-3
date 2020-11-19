@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.security.RolesAllowed;
@@ -16,6 +17,7 @@ import static javax.ejb.TransactionAttributeType.REQUIRED;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import rental.Car;
+import rental.CarData;
 import rental.CarRentalCompany;
 import rental.CarType;
 import rental.TypeAlreadyExistsException;
@@ -66,8 +68,13 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     @TransactionAttribute(REQUIRED)
-    public void addCompany(String name, List<String> regions, List<Car> cars) {
-        CarRentalCompany newCC = new CarRentalCompany(name, regions, cars);
+    public void addCompany(String name, List<String> regions, List<CarData> cars) {
+        List initialCars = new LinkedList<>();
+        for (CarData cd : cars) {
+            initialCars.add(new Car(cd.id, cd.type));
+        }
+        
+        CarRentalCompany newCC = new CarRentalCompany(name, regions, initialCars);
         em.persist(newCC);
     }
     
