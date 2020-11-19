@@ -3,8 +3,10 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,8 +37,36 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
         
         CrcData hertzData = loadRental("hertz.csv");
         CrcData dockxData = loadRental("dockx.csv");
-        managerSession.addCompany(hertzData.name, hertzData.regions, hertzData.cars);
-        managerSession.addCompany(dockxData.name, dockxData.regions, dockxData.cars);
+        managerSession.addCompany(hertzData.name, hertzData.regions, new ArrayList<>());
+        managerSession.addCompany(dockxData.name, dockxData.regions, new ArrayList<>());
+        
+        Set<CarType> allTypes1 = new HashSet<>();
+        
+        Set<CarType> allTypes2 = new HashSet<>();
+        
+        for (Car c : hertzData.cars) {
+            allTypes1.add(c.getType());
+        }
+        
+        for (Car c : dockxData.cars) {
+            allTypes2.add(c.getType());
+        }
+        
+        for (CarType ct : allTypes1) {
+            managerSession.addCarType(ct, "Hertz");
+        }
+        
+        for (CarType ct : allTypes2) {
+            managerSession.addCarType(ct, "Dockx");
+        }
+        
+        for (Car c : hertzData.cars) {
+            managerSession.addCar(c.getId(), c.getType().getName(), "Hertz");
+        }
+        
+        for (Car c : dockxData.cars) {
+            managerSession.addCar(c.getId(), c.getType().getName(), "Dockx");
+        }
         
         new Main("trips").run();               
     }
@@ -57,6 +87,8 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
        System.out.println(ms.getCarTypes(carRentalCompanyName));
        System.out.println(ms.getCarIds(carRentalCompanyName, "MPV"));
        System.out.println(ms.getNumberOfReservations(carRentalCompanyName, "Compact", 1));
+       ms.addCarType(new CarType("CHECK", 666, 900000, 10000, true), carRentalCompanyName);
+       ms.addCar(420, "CHECK", carRentalCompanyName);
        return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
     }
 
@@ -104,7 +136,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
     private static CrcData loadRental(String datafile) {
         CrcData data = null;
         try {
-            data = loadData(datafile);
+            data =loadData(datafile);
             Logger.getLogger(Main.class.getName()).log(Level.INFO, "Loaded {0} from file {1}", new Object[]{data.name, datafile});
         } catch (NumberFormatException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "bad file", ex);
