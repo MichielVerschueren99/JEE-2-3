@@ -3,10 +3,9 @@ package rental;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import static javax.persistence.GenerationType.AUTO;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.DATE;
 
@@ -25,14 +24,8 @@ public class Quote implements Serializable {
     private String carType;
     private double rentalPrice;
     
-    @TableGenerator(name="quoteGen",
-        table="QUOTE_ID_GENERATOR",
-        pkColumnName="GEN_KEY",
-        valueColumnName="GEN_VALUE",
-        pkColumnValue="QUOTE_ID",
-        allocationSize=1)
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="quoteGen")
+    @GeneratedValue(strategy=AUTO)
     private long globalID;
     
     

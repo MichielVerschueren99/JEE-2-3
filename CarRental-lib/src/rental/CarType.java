@@ -3,9 +3,8 @@ package rental;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import static javax.persistence.GenerationType.AUTO;
 import javax.persistence.Id;
-import javax.persistence.TableGenerator;
 
 @Entity
 public class CarType implements Serializable{
@@ -17,14 +16,8 @@ public class CarType implements Serializable{
     //trunk space in liters
     private float trunkSpace;
     
-    @TableGenerator(name="carTypeGen",
-        table="CARTYPE_ID_GENERATOR",
-        pkColumnName="GEN_KEY",
-        valueColumnName="GEN_VALUE",
-        pkColumnValue="CARTYPE_ID",
-        allocationSize=1)
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="carTypeGen")
+    @GeneratedValue(strategy=AUTO)
     private long carTypeID;
     
     /***************

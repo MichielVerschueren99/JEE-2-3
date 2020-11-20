@@ -5,7 +5,9 @@
  */
 package rental;
 
-public class CarData {
+import java.io.Serializable;
+
+public class CarData implements Serializable {
         
     public CarData(int givenID , CarType givenType) {
         this.id = givenID;
