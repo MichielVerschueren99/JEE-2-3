@@ -19,6 +19,8 @@ import rental.CarData;
 import rental.CarType;
 import rental.Reservation;
 import rental.ReservationConstraints;
+import rental.TypeAlreadyExistsException;
+import rental.TypeNotInCrCException;
 import session.ManagerSessionRemote;
 import session.ReservationSessionRemote;
 
@@ -68,7 +70,7 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
             managerSession.addCar(c.id, c.type.getName(), "Dockx");
         }
         
-        new Main("trips").run();               
+        new Main("trips").run();
     }
 
     @Override
@@ -125,6 +127,14 @@ public class Main extends AbstractTestManagement<ReservationSessionRemote, Manag
     
     protected void addCompany(ManagerSessionRemote ms, String name, List<String> regions, List<CarData> cars) {
         ms.addCompany(name, regions, cars);
+    }
+    
+    protected void addCar(ManagerSessionRemote ms, int id, String typeName, String crcName) throws TypeNotInCrCException {
+        ms.addCar(id, typeName, crcName);
+    }
+    
+    protected void addCarType(ManagerSessionRemote ms, CarType ct, String crcName) throws TypeAlreadyExistsException {
+        ms.addCarType(ct, crcName);
     }
     
     private static CrcData loadRental(String datafile) {
