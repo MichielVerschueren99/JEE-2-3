@@ -22,7 +22,7 @@ public class CarRentalCompany {
     @Id
     private String name;
     
-    @OneToMany(cascade=ALL, orphanRemoval=true)
+    @OneToMany(cascade=ALL)
     private List<Car> cars;
     
     @OneToMany(cascade=ALL)

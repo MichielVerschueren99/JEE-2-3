@@ -32,18 +32,19 @@ public class ReservationSession implements ReservationSessionRemote {
     private String renter;
     private List<Quote> quotes = new LinkedList<>();
 
+    @Override
     public Set<String> getAllRentalCompanies() { //NG
         List<String> companies = em.createQuery("SELECT cc.name FROM CarRentalCompany cc").getResultList();
         return new HashSet<>(companies);
     }
     
     @Override
-    public List<CarType> getAvailableCarTypes(Date start, Date end) {
+    public List<CarType> getAvailableCarTypes(Date start, Date end) { //NG
         List<CarType> result = em.createQuery(
                 "SELECT ct FROM CarType ct "
               + "WHERE EXISTS (SELECT c FROM Car c "
                            +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN (c.reservations) AS q " 
-                                                              + "WHERE NOT (r.startDate >= :givenEndDate OR r.endDate <= :givenStartDate)))")
+                                                              + "WHERE r.startDate < :givenEndDate AND r.endDate > :givenStartDate))")
                 .setParameter("givenEndDate", end)
                 .setParameter("givenStartDate", start)
                 .getResultList();
