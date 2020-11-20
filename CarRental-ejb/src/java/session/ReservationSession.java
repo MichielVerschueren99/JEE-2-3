@@ -43,7 +43,7 @@ public class ReservationSession implements ReservationSessionRemote {
         List<CarType> result = em.createQuery(
                 "SELECT ct FROM CarType ct "
               + "WHERE EXISTS (SELECT c FROM Car c "
-                           +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM Reservation r, IN (c.reservations) AS q " 
+                           +  "WHERE c.type = ct AND NOT EXISTS (SELECT r FROM c.reservations r " 
                                                               + "WHERE r.startDate < :givenEndDate AND r.endDate > :givenStartDate))")
                 .setParameter("givenEndDate", end)
                 .setParameter("givenStartDate", start)
